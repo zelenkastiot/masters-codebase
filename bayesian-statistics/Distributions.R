@@ -57,11 +57,68 @@ legend(
 )
 
 ################################################### Free throws example
-curve(dbeta(x, 2, 3))
-curve(dbeta(x, 20, 30))
-curve(dbeta(x, 20, 33))
+curve(dbeta(x, 2, 3), col = "blue", add = TRUE)
+curve(dbeta(x, 20, 30), col = "red", add = TRUE)
+curve(dbeta(x, 20, 33), col = "green", add = TRUE)
 
 qbeta(c(0.05, .95), 30, 23)
 
 source("Desktop/masters-codebase/bayesian-statistics/BetaParmsFromQuantiles.R")
 beta.parms.from.quantiles(c(.6, .9), plot = T)
+
+################################################### Binomial
+## Example 1: fixed theta
+
+Y1 <- rbinom(1000, 10, 0.1)
+Y2 <- rbinom(1000, 10, 0.2)
+Y3 <- rbinom(1000, 10, 0.3)
+
+par(mfrow = c(1, 3))
+
+hist(
+  Y1,
+  xlab = "Y1 Bin ( 10 , 0.1 )",
+  col = "gold",
+  main = expression(theta == 0.1)
+)
+hist(
+  Y2,
+  xlab = "Y2 Bin ( 10 , 0.2 )",
+  col = "forestgreen",
+  main = expression(theta == 0.2)
+)
+hist(
+  Y3,
+  xlab = "Y3 Bin ( 10 , 0.3 )",
+  col = "red",
+  main = expression(theta == 0.3)
+)
+par(oma = c(0, 0, 2, 0))
+
+title(
+  "Number of sunny days ( samples of 1000), for different theta",
+  outer = TRUE
+)
+
+## Example 2: theta from PDF
+par(mfrow = c(1, 1))
+theta <- rbeta(1000, 3, 11)
+
+Y = c()
+for (i in theta) {
+  r <- rbinom(100, 10, i)
+  Y = c(Y, r)
+}
+
+hist(Y, main = "", freq = F)
+
+hist(theta, freq = T)
+curve(dbeta(x, 3, 11), col = "red", add = TRUE)
+
+library(extraDistr)
+points(
+  dbbinom(x, size = 10, alpha = 3, beta = 11),
+  add = TRUE,
+  col = "darkblue",
+  lwd = 2
+)
